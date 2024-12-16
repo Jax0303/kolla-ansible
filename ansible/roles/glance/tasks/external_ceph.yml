@@ -11,26 +11,20 @@
   become: true
   when: service | service_enabled_and_mapped_to_host
 
-- name: Copy over multiple ceph configs for Glance
-  merge_configs:
-    sources:
-      - "{{ node_custom_config }}/glance/{{ item.cluster }}.conf"
-      - "{{ node_custom_config }}/glance/glance-api/{{ item.cluster }}.conf"
-    dest: "{{ node_config_directory }}/glance-api/ceph/{{ item.cluster }}.conf"
+- name: Copy over ceph configs for Glance
+  template:
+    src: "ceph.conf.j2"
+    dest: "{{ node_config_directory }}/glance-api/ceph/ceph.conf"
     mode: "0660"
   become: true
   when: inventory_hostname in groups['glance-api']
-  with_items: "{{ glance_ceph_backends }}"
 
-- name: Copy over ceph Glance keyrings
-  vars:
-    keyring: "{{ item.cluster }}.client.{{ item.user }}.keyring"
+- name: Copy over ceph keyring for Glance
   template:
-    src: "{{ node_custom_config }}/glance/{{ keyring }}"
-    dest: "{{ node_config_directory }}/glance-api/ceph/{{ keyring }}"
+    src: "ceph.client.glance.keyring.j2"
+    dest: "{{ node_config_directory }}/glance-api/ceph/ceph.client.glance.keyring"
     mode: "0660"
   become: true
-  with_items: "{{ glance_ceph_backends }}"
   when: inventory_hostname in groups['glance-api']
 
 - name: Ensuring config directory has correct owner and permission

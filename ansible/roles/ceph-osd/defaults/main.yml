@@ -1,0 +1,13 @@
+---
+ceph_osd_devices:
+  # SSD for high performance
+  - device: "/dev/sdc"
+    journal: "/dev/sdc1"
+  - device: "/dev/sdd"
+    journal: "/dev/sdd1"
+  # HDD for capacity
+  - device: "/dev/sde"
+    journal: "/dev/sde1"
+  - device: "/dev/sdf"
+    journal: "/dev/sdf1" 
+    
